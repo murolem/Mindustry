@@ -286,6 +286,8 @@ public class Block extends UnlockableContent implements Senseable{
     public boolean allowRectanglePlacement = false;
     /** Build queue priority in schematics. */
     public int schematicPriority = 0;
+    /** Build queue priority when building. */
+    public int buildPriority = 0;
     /**
      * The color of this block when displayed on the minimap or map preview.
      * Do not set manually! This is overridden when loading for most blocks.

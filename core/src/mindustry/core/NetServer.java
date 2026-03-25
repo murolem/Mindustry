@@ -735,7 +735,7 @@ public class NetServer implements ApplicationListener{
                         con.rejectedRequests.add(req);
                         continue;
                     }
-                    player.unit().plans().addLast(req);
+                    player.unit().addPlan(req);
                 }
             }
         }

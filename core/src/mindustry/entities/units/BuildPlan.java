@@ -3,11 +3,13 @@ package mindustry.entities.units;
 import arc.func.*;
 import arc.math.geom.*;
 import arc.math.geom.QuadTree.*;
+import arc.struct.ObjectMap;
 import arc.util.*;
 import mindustry.content.*;
 import mindustry.game.*;
 import mindustry.gen.*;
 import mindustry.world.*;
+import mindustry.world.meta.BlockGroup;
 
 import static mindustry.Vars.*;
 
@@ -31,6 +33,14 @@ public class BuildPlan implements Position, QuadTreeObject{
 
     /** Visual scale. Used only for rendering.*/
     public float animScale = 0f;
+
+    /** Build/break priority per block group. */
+    public static ObjectMap<BlockGroup, Integer> priorityPerGroup = ObjectMap.of(
+            BlockGroup.transportation, 100,
+            BlockGroup.power, 95,
+            BlockGroup.walls, -95,
+            BlockGroup.turrets, -100
+    );
 
     /** This creates a build plan. */
     public BuildPlan(int x, int y, int rotation, Block block){
@@ -106,6 +116,11 @@ public class BuildPlan implements Position, QuadTreeObject{
     /** Transforms the internal position of this config using the specified function. */
     public void pointConfig(Cons<Point2> cons){
         this.config = pointConfig(block, this.config, cons);
+    }
+
+    /** Calculates build/break priority for this plan. */
+    public int priority() {
+        return priorityPerGroup.get(block.group, 0);
     }
 
     public BuildPlan copy(){

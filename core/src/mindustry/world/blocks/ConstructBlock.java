@@ -206,7 +206,7 @@ public class ConstructBlock extends Block{
                 if(control.input.buildWasAutoPaused && !control.input.isBuilding){
                     control.input.isBuilding = true;
                 }
-                player.unit().addBuild(new BuildPlan(tile.x, tile.y, rotation, current, lastConfig), false);
+                player.unit().addBuild(new BuildPlan(tile.x, tile.y, rotation, current, lastConfig));
             }
         }
 

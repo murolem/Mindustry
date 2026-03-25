@@ -71,13 +71,13 @@ public class BuilderAI extends AIController{
             //validate follower
             if(!following.isValid() || !following.activelyBuilding()){
                 following = null;
-                unit.plans.clear();
+                unit.clearAllPlans();
                 return;
             }
 
             //set to follower's first build plan, whatever that is
-            unit.plans.clear();
-            unit.plans.addFirst(following.buildPlan());
+            unit.clearAllPlans();
+            unit.addPlan(following.buildPlan());
             lastPlan = null;
         }else if((unit.buildPlan() == null || alwaysFlee) && !hold){
             //not following anyone or building
@@ -107,7 +107,7 @@ public class BuilderAI extends AIController{
             if(!req.breaking && timer.get(timerTarget2, 40f)){
                 for(Player player : Groups.player){
                     if(player.isBuilder() && player.unit().activelyBuilding() && player.unit().buildPlan().samePos(req) && player.unit().buildPlan().breaking){
-                        unit.plans.removeFirst();
+                        unit.clearNextPlanDequeue();
                         //remove from list of plans
                         unit.team.data().plans.remove(p -> p.x == req.x && p.y == req.y);
                         return;
@@ -130,12 +130,12 @@ public class BuilderAI extends AIController{
                     moving = !unit.within(req.tile(), range);
                 }else if(!unit.within(req, unit.type.buildRange - tilesize) && !state.rules.infiniteResources){
                     //discard the plan, it's too far away to reach while holding position. try the next one
-                    unit.plans.removeFirst();
+                    unit.clearNextPlanDequeue();
                     lastPlan = null;
                 }
             }else{
                 //discard invalid plan
-                unit.plans.removeFirst();
+                unit.clearNextPlanDequeue();
                 lastPlan = null;
             }
         }else{

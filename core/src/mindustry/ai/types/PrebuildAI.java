@@ -130,7 +130,7 @@ public class PrebuildAI extends AIController{
                 moving = !unit.within(req.tile(), range);
             }else{
                 //discard invalid plan
-                unit.plans.removeFirst();
+                unit.clearNextPlanDequeue();
                 lastPlan = null;
             }
         }else{
