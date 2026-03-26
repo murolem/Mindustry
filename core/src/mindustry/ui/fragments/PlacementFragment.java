@@ -28,6 +28,8 @@ import mindustry.type.*;
 import mindustry.ui.*;
 import mindustry.world.*;
 import mindustry.world.blocks.ConstructBlock.*;
+import mindustry.world.blocks.environment.OreBlock;
+import mindustry.world.blocks.production.Drill;
 import mindustry.world.meta.*;
 
 import java.util.*;
@@ -132,14 +134,37 @@ public class PlacementFragment{
         Tile tile = world.tileWorld(Core.input.mouseWorldX(), Core.input.mouseWorldY());
         if(tile != null && Core.input.keyTap(Binding.pick) && player.isBuilder() && !Core.scene.hasDialog()){ //mouse eyedropper select
             var build = tile.build;
+            // todo: fog check?
+            var floor = tile.floor();
+
+            var selected = input.block;
+
+            Block preferedMiner = null;
+            if(floor != null){
+                var overlay = tile.overlay();
+                if(overlay instanceof OreBlock){
+                    var canMineWith = content.blocks()
+                            .select((block) -> block instanceof Drill && ((Drill) block).canMine(tile) && block.unlockedNow());
+                    preferedMiner = canMineWith.firstOpt();
+                }
+            }
 
             //can't middle click buildings in fog
             if(build != null && build.inFogTo(player.team())){
                 build = null;
             }
 
-            Block tryBlock = build == null ? null : build instanceof ConstructBuild c ? c.current : build.block;
-            Object tryConfig = build == null || !build.block.copyConfig ? null : build.config();
+            Block tryBlock = preferedMiner != null
+                    ? preferedMiner
+                    : build == null
+                        ? null
+                        : build instanceof ConstructBuild c ? c.current : build.block;
+
+            Object tryConfig = preferedMiner != null
+                    ? preferedMiner.copyConfig
+                    : build == null || !build.block.copyConfig
+                        ? null
+                        : build.config();
 
             for(BuildPlan req : player.unit().plans()){
                 if(!req.breaking && req.block.bounds(req.x, req.y, Tmp.r1).contains(Core.input.mouseWorld())){
